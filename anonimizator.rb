@@ -32,23 +32,29 @@ class Backup
   end
 
   def db_info
-    yaml_file = YAML.load_file(yaml_path)
-    db_user = yaml_file['development']['username']
-    db_pass = yaml_file['development']['password']
-    db_host = yaml_file['development']['host']
+    yaml_file = YAML.load_file("database.yml")['development']
   end
 
-  def create
+  def create_backup
     time = Time.now
     created_at = time
     file_time = time.strftime("%Y\-%m\-%d_%H\-%M\-%S")
     check_path file_time
-    backup_db = "#{Dir.pwd}/backup/#{file_time}/#{DB_NAME_PREFIX}#{file_time}.sql.bz2"
+    backup_db_dir = "#{Dir.pwd}/backup/#{file_time}/#{DB_NAME_PREFIX}#{file_time}.sql.bz2"
+    
+    db_user = db_info['username']
+    db_pass = db_info['password']
+    db_host = db_info['host']
+    db = db_info['database']
+
+    exec "mysqldump --add-drop-table -u #{db_user} -p#{db_pass} -h #{db_host} #{db}  > #{backup_db_dir}" if fork.nil?
+
   end
 end
 
-anonim = Anonimizator.new
-anonim.connect_to_db('database.yml')
-anonim.select_tables('offer', 'user')
+# anonim = Anonimizator.new
+# anonim.connect_to_db('database.yml')
+# anonim.select_tables('offer', 'user')
+
 backup = Backup.new
 backup.create
