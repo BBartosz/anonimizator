@@ -23,17 +23,25 @@ class Anonimizator
     table.all.each do |record|
       columns_array.each do |column|
         if column == 'email'
-          at_sign_index = record[column].index('@')
-          record_to_replace = record[column][0] + '-' * (record[column][0..at_sign_index-1].length - 2) + record[column][at_sign_index-1] + record[column][at_sign_index..-1] if record[column][0..at_sign_index-1].length >= 2
-          puts record_to_replace
+          puts anonimize_email(record[column])
         else
-          record_to_replace = record[column][0] + '-' * (record[column].length - 2) + record[column][-1]
+          record_to_replace = anonimize_string(record[column])
           record.update_attribute(column, record_to_replace ) 
         end
       end
     end
   end
 
+  def anonimize_email(emailstring)
+    splitted_email_array = emailstring.split('@')
+    first_part_of_email  = splitted_email_array[0]
+    splitted_email_array[0]  = first_part_of_email[0] + '-' * (first_part_of_email.length - 2) + first_part_of_email[-1]
+    splitted_email_array.join('@')
+  end
+
+  def anonimize_string(string)
+    string[0] + '-' * (string.length - 2) + string[-1]
+  end
 end
 
 
@@ -41,6 +49,6 @@ end
 anonim = Anonimizator.new
 anonim.connect_to_db('database.yml')
 
-anonim.select_tables({:user => ['email']})
+anonim.select_tables({:offer => ['city'], :user => ['email']})
 backup = Backup.new('database.yml')
 backup.create_backup
