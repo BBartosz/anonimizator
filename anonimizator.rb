@@ -28,18 +28,18 @@ class Anonimizator
   end
 
   def anonimize_column (record, column)
-    if column.include? ('@')
+    if record[column].include? ('@')
       record_to_replace = anonimize_email(record[column])
       record.update_attribute(column, record_to_replace)
     else
       record_to_replace = record[column] 
       record_to_replace[1..-2] = anonimize_string(record[column])
-      record.update_attribute(column, record_to_replace) 
+      record.reload.update_attribute(column, record_to_replace)
     end
   end
 
   def anonimize_email(email)
-    parts    = email.split('@')
+    parts           = email.split('@')
     parts[0][1..-2] = anonimize_string(parts[0])
     parts.join('@')
   end
