@@ -2,71 +2,45 @@ require 'rubygems'
 require 'active_record'
 require 'mysql2'
 require 'fileutils'
+require './backup'
 
 class Anonimizator
+
   def connect_to_db(yaml_path)
     yaml_file        = YAML.load_file(yaml_path)
     connection_to_db = ActiveRecord::Base.establish_connection(yaml_file['development'])
   end
 
-  def select_tables(table, columns_array)
-    
-    class_name = table.capitalize
-    table_object  = Object.const_set(class_name, Class.new(ActiveRecord::Base))
-
-    anonimize_records(table_object, columns_array)
+  def select_tables(hash_names_columns)
+    hash_names_columns.each do |table_name, columns_array|
+      class_name    = table_name.capitalize
+      table_object  = Object.const_set(class_name, Class.new(ActiveRecord::Base))
+      anonimize_records(table_object, columns_array)
+    end  
   end
   
   def anonimize_records(table, columns_array)
     table.all.each do |record|
       columns_array.each do |column|
-        record.update_attribute(column, '-' ) 
+        if column == 'email'
+          at_sign_index = record[column].index('@')
+          record_to_replace = record[column][0] + '-' * (record[column][0..at_sign_index-1].length - 2) + record[column][at_sign_index-1] + record[column][at_sign_index..-1] if record[column][0..at_sign_index-1].length >= 2
+          puts record_to_replace
+        else
+          record_to_replace = record[column][0] + '-' * (record[column].length - 2) + record[column][-1]
+          record.update_attribute(column, record_to_replace ) 
+        end
       end
     end
   end
+
 end
 
-class Backup
-  DB_NAME_PREFIX = 'db_'
 
-  def initialize(yaml_path)
-    @yaml_file = YAML.load_file(yaml_path)
-  end
-  
-  def check_path(time)
-    full_backup_path = "#{Dir.pwd}/backup/#{time}/"
-    check_path       = ''
-
-    full_backup_path.split('/').each { |el|
-      check_path += "#{el}/"
-      Dir.mkdir(check_path) unless File.directory?(check_path)
-    }
-  end
-
-  def db_info
-    @yaml_file['development']
-  end
-
-  def create_backup
-    time = Time.now
-    created_at = time
-    file_time  = time.strftime("%Y\-%m\-%d_%H\-%M\-%S")
-    check_path file_time
-    backup_db_dir = "#{Dir.pwd}/backup/#{file_time}/#{DB_NAME_PREFIX}#{file_time}.sql"
-    
-    db_user = db_info['username']
-    db_pass = db_info['password']
-    db_host = db_info['host']
-    db      = db_info['database']
-
-    exec "mysqldump --add-drop-table -u #{db_user} -p#{db_pass} -h #{db_host} #{db}  > #{backup_db_dir}" if fork.nil?
-
-  end
-end
 
 anonim = Anonimizator.new
 anonim.connect_to_db('database.yml')
-anonim.select_tables('offer', ['city', 'property_form'])
 
-# backup = Backup.new('database.yml')
-# backup.create_backup
+anonim.select_tables({:user => ['email']})
+backup = Backup.new('database.yml')
+backup.create_backup

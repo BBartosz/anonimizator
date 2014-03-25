@@ -13,3 +13,23 @@
       end
     end
   end
+
+
+
+class Record < ActiveRecord::Base
+end
+
+Record.establish_connectiom(params)
+
+tables.each do |name, columns|
+  Record.set_table(name)
+
+  Record.all.each do |record|
+    columns.each do |column|
+      value = record.send(column)
+      new_value = change_value(value)
+      record.send("#{column}=", value)
+      record.save
+    end
+  end
+end
