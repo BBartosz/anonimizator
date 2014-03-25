@@ -6,21 +6,24 @@ require 'fileutils'
 class Anonimizator
   def connect_to_db(yaml_path)
     yaml_file        = YAML.load_file(yaml_path)
-    puts yaml_file
     connection_to_db = ActiveRecord::Base.establish_connection(yaml_file['development'])
   end
 
-  def select_tables(*tables)
-    tables.each do |table|
-      class_name = table.capitalize
-      class_def  = Object.const_set(class_name, Class.new(ActiveRecord::Base))
+  def select_tables(table, columns_array)
+    
+    class_name = table.capitalize
+    table_object  = Object.const_set(class_name, Class.new(ActiveRecord::Base))
 
-      class_def.all.each do |oferta|
-        oferta.update_attribute(:city, '-' * oferta.city.length) 
+    anonimize_records(table_object, columns_array)
+  end
+  
+  def anonimize_records(table, columns_array)
+    table.all.each do |record|
+      columns_array.each do |column|
+        record.update_attribute(column, '-' ) 
       end
     end
   end
-
 end
 
 class Backup
@@ -63,7 +66,7 @@ end
 
 anonim = Anonimizator.new
 anonim.connect_to_db('database.yml')
-anonim.select_tables('offer')
+anonim.select_tables('offer', ['city', 'property_form'])
 
 # backup = Backup.new('database.yml')
 # backup.create_backup
