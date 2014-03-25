@@ -8,10 +8,7 @@
     moja_tabela = Object.const_set(tabela, Class.new(ActiveRecord::Base))
     # tu mamy dostep do nazw kolumn danej tabeli wiec iteruje po liscie z nazwami kolumn
     hash[tabela].each do |nazwakolumny|
-      # teraz muszę iterować po nazwach kolumny i wyciagnac wszystkie wartosci z danej kolumny. 
-      moja_tabela.select(nazwakolumny).each do |kolumna|
-        #tu zmieniam te wartosci
-        kolumna.nazwakolumny = '-'*nazwakolumny.length
+      
         
       end
     end

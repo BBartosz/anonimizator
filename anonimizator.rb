@@ -14,9 +14,13 @@ require 'fileutils'
     tables.each do |table|
       class_name = table.capitalize
       class_def  = Object.const_set(class_name, Class.new(ActiveRecord::Base))
-      puts class_def.class
+
+      class_def.all.each do |oferta|
+        oferta.update_attribute(:city, '-' * oferta.city.length) 
+      end
     end
   end
+
 end
 
 class Backup
@@ -59,7 +63,7 @@ end
 
 anonim = Anonimizator.new
 anonim.connect_to_db('database.yml')
-anonim.select_tables('offer', 'user')
+anonim.select_tables('offer')
 
-backup = Backup.new('database.yml')
-backup.create_backup
+# backup = Backup.new('database.yml')
+# backup.create_backup
