@@ -1,12 +1,12 @@
 require 'rubygems'
 require 'active_record'
 require 'mysql2'
-require 'table_print'
 require 'fileutils'
 
-  class Anonimizator
+class Anonimizator
   def connect_to_db(yaml_path)
     yaml_file        = YAML.load_file(yaml_path)
+    puts yaml_file
     connection_to_db = ActiveRecord::Base.establish_connection(yaml_file['development'])
   end
 
