@@ -11,10 +11,9 @@ class Anonimizator
     connection_to_db = ActiveRecord::Base.establish_connection(yaml_file['development'])
   end
 
-  def select_tables(hash_names_columns)
-    hash_names_columns.each do |table_name, columns_array|
-      class_name    = table_name.capitalize
-      table_object  = Object.const_set(class_name, Class.new(ActiveRecord::Base))
+  def select_tables(table_columns)
+    table_columns.each do |table_name, columns_array|
+      table_object  = Object.const_set(table_name.capitalize, Class.new(ActiveRecord::Base))
       anonimize_records(table_object, columns_array)
     end  
   end
@@ -29,12 +28,12 @@ class Anonimizator
 
   def anonimize_column (record, column)
     if record[column].include? ('@')
-      record_to_replace = anonimize_email(record[column])
-      record.update_attribute(column, record_to_replace)
+      replace_str = anonimize_email(record[column])
+      record.update_attribute(column, replace_str)
     else
-      record_to_replace = record[column] 
-      record_to_replace[1..-2] = anonimize_string(record[column])
-      record.reload.update_attribute(column, record_to_replace)
+      replace_str        = record[column] 
+      replace_str[1..-2] = anonimize_string(record[column])
+      record.reload.update_attribute(column, replace_str)
     end
   end
 
@@ -52,9 +51,9 @@ end
 
 
 
-anonim = Anonimizator.new
-anonim.connect_to_db('database.yml')
+# anonim = Anonimizator.new
+# anonim.connect_to_db('database.yml')
 
-anonim.select_tables({:offer => ["city", "property_form"], :user => ['email']})
-# backup = Backup.new('database.yml')
-# backup.create_backup
+# anonim.select_tables({:offer => ["city", "property_form"], :user => ['email']})
+backup = Backup.new('database.yml')
+backup.create_backup

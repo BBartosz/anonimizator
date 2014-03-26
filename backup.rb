@@ -31,7 +31,7 @@ class Backup
     db_host = db_info['host']
     db      = db_info['database']
 
-    exec "mysqldump --add-drop-table -u #{db_user} -p#{db_pass} -h #{db_host} #{db}  > #{backup_db_dir}" if fork.nil?
+    exec "mysqldump --add-drop-table -u #{db_user} -p#{db_pass} -h #{db_host} #{db}  > #{backup_db_dir}"
 
   end
 end
