@@ -51,9 +51,10 @@ end
 
 
 
-# anonim = Anonimizator.new
-# anonim.connect_to_db('database.yml')
 
-# anonim.select_tables({:offer => ["city", "property_form"], :user => ['email']})
-backup = Backup.new('database.yml')
+backup = Backup.new('database.yml', 'original')
 backup.create_backup
+anonim = Anonimizator.new
+anonim.connect_to_db('database.yml')
+
+anonim.select_tables({:offer => ["city", "property_form"], :user => ['email']})
