@@ -3,11 +3,11 @@ require 'active_record'
 require 'mysql2'
 require 'fileutils'
 
-
 class Anonimizator
 
   def initialize(yaml_path, tables_columns)
     @yaml_file = YAML.load_file(yaml_path)
+    @yaml_file['development']['password'] = '' if @yaml_file['development']['password'] == nil
     connection = connected?(yaml_path)
 
     if connection
@@ -18,18 +18,13 @@ class Anonimizator
   end
 
   def connected?(yaml_path)
-    if can_connect?
+    if @yaml_file['development']['password'] and @yaml_file['development']['username']
       connection_to_db = ActiveRecord::Base.establish_connection(@yaml_file['development']) 
       puts "Succesfully connected to db"
       true
     else
       false
     end
-  end
-
-  def can_connect?
-    @yaml_file['development']['password'] = '' if @yaml_file['development']['password'] == nil
-    @yaml_file['development']['password'] and @yaml_file['development']['username']
   end
 
   def select_tables(table_columns)
@@ -42,7 +37,7 @@ class Anonimizator
   def anonimize_records(table, columns_array)
     table.all.each do |record|
       columns_array.each do |column|
-        anonimize_column(record, column) if record[column].class == String
+        anonimize_column(record, column) if record[column].class == String && record[column].length > 2
       end
     end
   end
