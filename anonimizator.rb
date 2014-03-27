@@ -7,13 +7,26 @@ require 'fileutils'
 class Anonimizator
 
   def initialize(yaml_path, tables_columns)
-    connect_to_db(yaml_path)
-    select_tables(tables_columns)
+    @yaml_file        = YAML.load_file(yaml_path)
+    connection       = connected?(yaml_path)
+    if connection
+      select_tables(tables_columns) 
+    else
+      puts "Specify password in your yaml file, cannot anonimize."
+    end
   end
 
-  def connect_to_db(yaml_path)
-    yaml_file        = YAML.load_file(yaml_path)
-    connection_to_db = ActiveRecord::Base.establish_connection(yaml_file['development'])
+  def connected?(yaml_path)
+    if can_connect?
+      connection_to_db = ActiveRecord::Base.establish_connection(@yaml_file['development']) 
+      true
+    else
+      false
+    end
+  end
+
+  def can_connect?
+    @yaml_file['development']['password'] and @yaml_file['development']['username']
   end
 
   def select_tables(table_columns)

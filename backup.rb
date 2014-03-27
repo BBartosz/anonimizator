@@ -12,20 +12,11 @@ class Backup
   end
 
   def create_backup(name)
-    if @db_pass and @db_user
-      `mysqldump --add-drop-table -u#{@db_user} -p#{@db_pass}  #{@db} > #{name}.sql`
-      true 
-    else
-      false
-    end
+    system("mysqldump --add-drop-table -u#{@db_user} -p#{@db_pass}  #{@db} > #{name}.sql") 
   end
 
   def restore_backup(name)
-    if @db_pass
-      `mysql -u#{@db_user} -p#{@db_pass} #{@db} < #{name}.sql`
-    else
-      puts 'Specify password in your yaml file'
-    end
+    system("mysql -u#{@db_user} -p#{@db_pass} #{@db} < #{name}.sql")
   end
 
 end
