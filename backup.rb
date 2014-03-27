@@ -12,11 +12,21 @@ class Backup
   end
 
   def create_backup(name)
-    system("mysqldump --add-drop-table -u#{@db_user} -p#{@db_pass}  #{@db} > #{name}.sql") 
+    if @db_pass.empty?
+      system("mysqldump --add-drop-table -u#{@db_user} #{@db} > #{name}.sql") 
+    else
+      system("mysqldump --add-drop-table -u#{@db_user} -p#{@db_pass}  #{@db} > #{name}.sql") 
+    end
+    
   end
 
   def restore_backup(name)
-    system("mysql -u#{@db_user} -p#{@db_pass} #{@db} < #{name}.sql")
+    if @db_pass.empty?
+      system("mysql -u#{@db_user} #{@db} < #{name}.sql")
+    else
+      system("mysql -u#{@db_user} -p#{@db_pass} #{@db} < #{name}.sql")
+    end
+    
   end
 
 end
