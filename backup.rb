@@ -1,7 +1,7 @@
 class Backup
 
   def initialize(yaml_path)
-    @yaml_file = YAML.load_file(yaml_path)
+    @yaml_file  = YAML.load_file(yaml_path)
 
     dev_db_info = @yaml_file['development']
 
@@ -12,11 +12,20 @@ class Backup
   end
 
   def create_backup(name)
-    exec "mysqldump --add-drop-table -u#{@db_user} -p#{@db_pass} -h#{@db_host} #{@db} > #{name}.sql" if fork.nil?
+    if @db_pass and @db_user
+      `mysqldump --add-drop-table -u#{@db_user} -p#{@db_pass}  #{@db} > #{name}.sql`
+      true 
+    else
+      false
+    end
   end
 
   def restore_backup(name)
-    exec "mysql -u#{@db_user} -p#{@db_pass} #{@db} < #{name}.sql" if fork.nil?
+    if @db_pass
+      `mysql -u#{@db_user} -p#{@db_pass} #{@db} < #{name}.sql`
+    else
+      puts 'Specify password in your yaml file'
+    end
   end
 
 end

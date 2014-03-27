@@ -2,9 +2,14 @@ require 'rubygems'
 require 'active_record'
 require 'mysql2'
 require 'fileutils'
-require './backup'
+
 
 class Anonimizator
+
+  def initialize(yaml_path, tables_columns)
+    connect_to_db(yaml_path)
+    select_tables(tables_columns)
+  end
 
   def connect_to_db(yaml_path)
     yaml_file        = YAML.load_file(yaml_path)
@@ -49,15 +54,3 @@ class Anonimizator
   end
 end
 
-
-
-backup = Backup.new('database.yml')
-backup.create_backup('original')
-
-anonim = Anonimizator.new
-anonim.connect_to_db('database.yml')
-anonim.select_tables({:offer => ["city", "property_form"], :user => ['email']})
-
-backup.create_backup('anonimized')
-
-backup.restore_backup('original')
