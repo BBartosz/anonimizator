@@ -17,3 +17,4 @@ end
 
 tables_columns = {:offer => ["city", "property_form"], :user => ['email']}
 start('database.yml', 'original', 'anonimized', tables_columns)
+

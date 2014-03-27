@@ -7,8 +7,8 @@ require 'fileutils'
 class Anonimizator
 
   def initialize(yaml_path, tables_columns)
-    @yaml_file        = YAML.load_file(yaml_path)
-    connection       = connected?(yaml_path)
+    @yaml_file = YAML.load_file(yaml_path)
+    connection = connected?(yaml_path)
     if connection
       select_tables(tables_columns) 
     else
