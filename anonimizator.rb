@@ -42,7 +42,7 @@ class Anonimizator
   def anonimize_records(table, columns_array)
     table.all.each do |record|
       columns_array.each do |column|
-        anonimize_column(record, column)
+        anonimize_column(record, column) if record[column].class == String
       end
     end
   end

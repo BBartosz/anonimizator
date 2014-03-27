@@ -1,5 +1,6 @@
 require './anonimizator'
 require './backup'
+require 'rspec'
 
 def start(yaml_path, original_backup_name, anonimized_backup_name, tables_columns)
   backup = Backup.new(yaml_path)
