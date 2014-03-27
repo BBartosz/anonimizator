@@ -16,8 +16,7 @@ class Backup
       system("mysqldump --add-drop-table -u#{@db_user} #{@db} > #{name}.sql") 
     else
       system("mysqldump --add-drop-table -u#{@db_user} -p#{@db_pass}  #{@db} > #{name}.sql") 
-    end
-    
+    end   
   end
 
   def restore_backup(name)
@@ -26,7 +25,6 @@ class Backup
     else
       system("mysql -u#{@db_user} -p#{@db_pass} #{@db} < #{name}.sql")
     end
-    
   end
 
 end
