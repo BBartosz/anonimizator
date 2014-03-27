@@ -2,11 +2,11 @@ require './anonimizator'
 require './backup'
 require 'rspec'
 
-class ScriptError < StandardError
-  def initialize(msg = "ScriptError occured.")
-    super(msg)
-  end
-end
+# class ScriptError < StandardError
+#   def initialize(msg = "ScriptError occured.")
+#     super(msg)
+#   end
+# end
 
 def start(yaml_path, original_backup_name, anonimized_backup_name, tables_columns)
   backup = Backup.new(yaml_path)

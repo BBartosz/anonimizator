@@ -8,23 +8,17 @@ class Anonimizator
   def initialize(yaml_path, tables_columns)
     @yaml_file = YAML.load_file(yaml_path)
     @yaml_file['development']['password'] = '' if @yaml_file['development']['password'] == nil
-    connection = connected?(yaml_path)
 
-    if connection
+    if can_connect?
+      connection_to_db = ActiveRecord::Base.establish_connection(@yaml_file['development'])
       select_tables(tables_columns) 
     else
       puts "Specify password in your yaml file, cannot anonimize."
     end
   end
 
-  def connected?(yaml_path)
-    if @yaml_file['development']['password'] and @yaml_file['development']['username']
-      connection_to_db = ActiveRecord::Base.establish_connection(@yaml_file['development']) 
-      puts "Succesfully connected to db"
-      true
-    else
-      false
-    end
+  def can_connect?
+    @yaml_file['development']['password'] and @yaml_file['development']['username']
   end
 
   def select_tables(table_columns)
