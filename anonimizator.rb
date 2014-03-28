@@ -9,16 +9,11 @@ class Anonimizator
     @yaml_file = YAML.load_file(yaml_path)[db_environment]
     @yaml_file['password'] = '' if @yaml_file['password'] == nil
 
-    if can_connect?
-      ActiveRecord::Base.establish_connection(@yaml_file)
+    if ActiveRecord::Base.establish_connection(@yaml_file)
       anonimize_tables(tables_columns) 
     else
       puts "Specify password in your yaml file, cannot anonimize."
     end
-  end
-
-  def can_connect?
-    @yaml_file['password'] and @yaml_file['username']
   end
 
   def anonimize_tables(table_columns)
@@ -57,6 +52,7 @@ class Anonimizator
 
   def anonimize_string(string)
     return string if string.length < 3
+
     anonimized = '-' * (string.length - 2)
     string[0] + anonimized + string[-1]
   end
