@@ -1,14 +1,12 @@
 class Backup
 
-  def initialize(yaml_path)
-    @yaml_file  = YAML.load_file(yaml_path)
+  def initialize(yaml_path, db_environment)
+    @yaml_file  = YAML.load_file(yaml_path)[db_environment]
 
-    dev_db_info = @yaml_file['development']
-
-    @db_user    = dev_db_info['username']
-    @db_pass    = dev_db_info['password']
-    @db_host    = dev_db_info['host']
-    @db         = dev_db_info['database']
+    @db_user    = @yaml_file['username']
+    @db_pass    = @yaml_file['password']
+    @db_host    = @yaml_file['host']
+    @db         = @yaml_file['database']
   end
 
   def create_backup(name)
