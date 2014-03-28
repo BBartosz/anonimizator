@@ -2,9 +2,7 @@ require 'rubygems'
 require 'active_record'
 require 'mysql2'
 require 'fileutils'
-
-class Record < ActiveRecord::Base
-end
+require './error'
 
 class Anonimizator
 
@@ -13,9 +11,9 @@ class Anonimizator
     @yaml_file['password'] = '' if @yaml_file['password'] == nil
 
     if ActiveRecord::Base.establish_connection(@yaml_file)
-      anonimize_tables(tables_columns) 
+      anonimize_tables(tables_columns)
     else
-      puts "Specify password in your yaml file, cannot anonimize."
+      raise Error.new("Specify password in your yaml file, cannot anonimize.")
     end
   end
 

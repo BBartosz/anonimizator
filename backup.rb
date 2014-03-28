@@ -1,3 +1,5 @@
+require './error'
+
 class Backup
 
   def initialize(yaml_path, db_environment)
@@ -11,17 +13,17 @@ class Backup
 
   def create_backup(name)
     if @db_pass.nil? || @db_pass == ''
-      system("mysqldump --add-drop-table -u#{@db_user} #{@db} > #{name}.sql") 
+      raise Error.new("Cannot create backup") if !system("mysql -u#{@db_user} #{@db} < #{name}.sql")
     else
-      system("mysqldump --add-drop-table -u#{@db_user} -p#{@db_pass}  #{@db} > #{name}.sql") 
+      raise Error.new("Cannot create backup") if !system("mysql -u#{@db_user} -p#{@db_pass} #{@db} < #{name}.sql")
     end      
   end
 
   def restore_backup(name)
     if @db_pass.nil? || @db_pass == ''
-      system("mysql -u#{@db_user} #{@db} < #{name}.sql")
+      raise Error.new("Cannot restore backup") if !system("mysql -u#{@db_user} #{@db} < #{name}.sql")
     else
-      system("mysql -u#{@db_user} -p#{@db_pass} #{@db} < #{name}.sql")
+      raise Error.new("Cannot restore backup") if !system("mysql -u#{@db_user} -p#{@db_pass} #{@db} < #{name}.sql")
     end
   end
 

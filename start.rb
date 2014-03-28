@@ -2,24 +2,19 @@ require './anonimizator'
 require './backup'
 require 'rspec'
 
-# class ScriptError < StandardError
-#   def initialize(msg = "ScriptError occured.")
-#     super(msg)
-#   end
-# end
+
 
 def start(yaml_path, tables_columns, db_environment)
-  backup = Backup.new(yaml_path, db_environment)
-  original_db = backup.create_backup('original')
-  if original_db
+  begin
+    backup = Backup.new(yaml_path, db_environment)
+    backup.create_backup('original')
     anonim = Anonimizator.new(yaml_path, tables_columns, db_environment)
     puts "Zanonimizowano bazę"
     backup.create_backup('anonimized')
     backup.restore_backup('original')
     puts "Przywrócono backup oryginalnej bazy"
-  else
-    puts "Cannot anonimize, cannot make backup of original db"
-    return 
+  rescue Exception => e  
+    puts e
   end
 end
 
