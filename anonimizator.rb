@@ -38,7 +38,7 @@ class Anonimizator
 
   def anonimize_field(record, column)
     anonimized_field = anonimize(record, column)
-    record.reload.update_attribute(column, anonimized_field)
+    record.update_attribute(column, anonimized_field)
   end
 
   def anonimize(record, column)
