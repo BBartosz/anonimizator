@@ -8,13 +8,13 @@ require 'rspec'
 #   end
 # end
 
-def start(yaml_path, original_backup_name, anonimized_backup_name, tables_columns)
+def start(yaml_path, tables_columns)
   backup = Backup.new(yaml_path)
-  original_db = backup.create_backup(original_backup_name)
+  original_db = backup.create_backup('original')
   if original_db
     anonim = Anonimizator.new(yaml_path, tables_columns)
     puts "Zanonimizowano bazę"
-    backup.create_backup(anonimized_backup_name)
+    backup.create_backup('anonimized_')
     backup.restore_backup(original_backup_name)
     puts "Przywrócono backup oryginalnej bazy"
   else
@@ -23,6 +23,6 @@ def start(yaml_path, original_backup_name, anonimized_backup_name, tables_column
   end
 end
 
-tables_columns = {:offer => ["city", "property_form"], :user => ['email']}
-start('database.yml', 'original', 'anonimized', tables_columns)
+tables_columns = {'offer' => ["city", "property_form"], 'user' => ['email']}
+start('database.yml', tables_columns)
 
