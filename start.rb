@@ -13,8 +13,8 @@ def start(yaml_path, tables_columns, db_environment)
     backup.create_backup('anonimized')
     backup.restore_backup('original')
     puts "Przywrócono backup oryginalnej bazy"
-  rescue Exception => e  
-    puts e
+  rescue Exception => msg  
+    puts msg
   end
 end
 
