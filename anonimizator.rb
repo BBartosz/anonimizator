@@ -50,9 +50,8 @@ class Anonimizator
   end
 
   def anonimize_email(email)
-    email                   = email.split('@')
-    email_name              = email[0]
-    anonimized_email_name   = anonimize_string(email_name)
+    email                 = email.split('@')
+    anonimized_email_name = anonimize_string(email[0])
     "#{anonimized_email_name}@#{email[1]}"
   end
 
