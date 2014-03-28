@@ -3,6 +3,9 @@ require 'active_record'
 require 'mysql2'
 require 'fileutils'
 
+class Record < ActiveRecord::Base
+end
+
 class Anonimizator
 
   def initialize(yaml_path, tables_columns, db_environment)
